@@ -11,7 +11,7 @@
 // --   );
 // -- $$);
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -151,8 +151,7 @@ type ProcessResult = {
 };
 
 async function processEnrollment(
-  // deno-lint-ignore no-explicit-any
-  supabase: ReturnType<typeof createClient<any>>,
+  supabase: SupabaseClient,
   enrollment: SequenceEnrollment,
   steps: EmailSequenceStep[],
   contact: Contact,
@@ -303,7 +302,7 @@ async function processEnrollment(
 // Edge Function handler
 // ──────────────────────────────────────────────────────────
 
-Deno.serve(async (_req: Request) => {
+Deno.serve(async () => {
   try {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
