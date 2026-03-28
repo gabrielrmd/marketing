@@ -1,7 +1,7 @@
 import { getFunnelOverview } from "@/lib/funnel/actions";
 import { OverviewClient } from "./overview-client";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 
 export default async function FunnelPage() {
   const result = await getFunnelOverview();

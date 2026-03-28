@@ -1,6 +1,6 @@
 import { getLeadMagnets } from "@/lib/funnel/actions";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
 import { LeadMagnetsClient } from "./lead-magnets-client";
 import type { LeadMagnet } from "@/lib/funnel/types";

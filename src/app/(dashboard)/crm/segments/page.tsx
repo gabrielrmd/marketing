@@ -1,6 +1,7 @@
 import { getSegments } from "@/lib/crm/queries";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import Link from "next/link";
 import { PlusIcon, RefreshCwIcon, UsersIcon } from "lucide-react";
 import { refreshSegmentMembers } from "@/lib/crm/actions";

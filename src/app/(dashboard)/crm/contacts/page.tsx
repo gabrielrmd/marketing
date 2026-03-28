@@ -1,7 +1,7 @@
 import { getContacts } from "@/lib/crm/queries";
 import { ContactsClient } from "./contacts-client";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { PlusIcon } from "lucide-react";
 
 export default async function ContactsPage() {

@@ -27,6 +27,7 @@ function ToolbarButton({ active, onClick, children }: { active?: boolean; onClic
 
 export function ContentEditor({ content, onChange, placeholder = "Start writing...", maxCharacters }: ContentEditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder }),
