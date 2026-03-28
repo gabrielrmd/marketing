@@ -133,9 +133,9 @@ export default function CampaignBudgetPage({
           )}
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" asChild>
-            <Link href={`/campaigns/${id}`}>Back to Campaign</Link>
-          </Button>
+          <Link href={`/campaigns/${id}`}>
+            <Button variant="outline">Back to Campaign</Button>
+          </Link>
         </div>
       </div>
 

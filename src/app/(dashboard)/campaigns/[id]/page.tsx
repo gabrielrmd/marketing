@@ -213,9 +213,9 @@ export default function CampaignDetailPage({
           <CardTitle className="font-[family-name:var(--font-oswald)] text-lg">
             Budget
           </CardTitle>
-          <Button size="sm" variant="outline" asChild>
-            <Link href={`/campaigns/${id}/budget`}>View Full Budget</Link>
-          </Button>
+          <Link href={`/campaigns/${id}/budget`}>
+            <Button size="sm" variant="outline">View Full Budget</Button>
+          </Link>
         </CardHeader>
         <CardContent>
           <BudgetSummary entries={budgetEntries} />

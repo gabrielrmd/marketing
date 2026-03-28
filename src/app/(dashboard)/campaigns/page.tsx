@@ -20,9 +20,9 @@ export default async function CampaignsPage() {
             Plan, track, and analyze your marketing campaigns.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/campaigns/new">Create Campaign</Link>
-        </Button>
+        <Link href="/campaigns/new">
+          <Button>Create Campaign</Button>
+        </Link>
       </div>
 
       {/* Error state */}
@@ -43,9 +43,9 @@ export default async function CampaignsPage() {
               Create your first campaign to get started.
             </p>
           </div>
-          <Button asChild>
-            <Link href="/campaigns/new">Create Campaign</Link>
-          </Button>
+          <Link href="/campaigns/new">
+            <Button>Create Campaign</Button>
+          </Link>
         </div>
       )}
 
