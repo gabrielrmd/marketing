@@ -145,3 +145,11 @@ export type ABTestResult = {
   winner: "a" | "b" | null;
   confidence: number;
 };
+
+export type PageBlockType = "hero" | "text" | "cta" | "form" | "image" | "testimonial";
+
+export type PageBlock = {
+  id: string;
+  type: PageBlockType;
+  content: Record<string, unknown>;
+};
