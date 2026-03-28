@@ -76,6 +76,7 @@ export type LeadScoreRule = {
 // Filter rule structure stored in segments.filter_rules jsonb column
 export type SegmentFilterRule = {
   stage_equals?: ContactStage;
+  not_stage_equals?: ContactStage;
   score_above?: number;
   score_below?: number;
   has_tag?: string;
