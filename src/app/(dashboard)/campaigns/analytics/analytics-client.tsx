@@ -17,6 +17,7 @@ import { CohortChart } from "@/components/campaigns/cohort-chart";
 import { AttributionTable } from "@/components/campaigns/attribution-table";
 import { DateRangePicker } from "@/components/campaigns/date-range-picker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ReportGenerator } from "@/components/campaigns/report-generator";
 
 // ─── Query data shapes (matching queries.ts outputs) ─────────────────────────
 
@@ -312,6 +313,12 @@ export function AnalyticsClient({
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* ── Report Generation ─────────────────────────────────────────────── */}
+      <div className="mt-8">
+        <h2 className="mb-4 text-lg font-semibold">Reports</h2>
+        <ReportGenerator />
+      </div>
     </div>
   );
 }
