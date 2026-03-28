@@ -41,7 +41,7 @@ export function PipelineCard({ contact }: Props) {
       {/* Name + score */}
       <div className="flex items-start justify-between gap-2 mb-1.5">
         <Link
-          href={`/dashboard/crm/contacts/${contact.id}`}
+          href={`/crm/contacts/${contact.id}`}
           className="font-medium text-sm leading-snug hover:underline line-clamp-1 flex-1"
           onClick={(e) => e.stopPropagation()}
         >

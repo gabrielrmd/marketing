@@ -41,7 +41,7 @@ export default function TemplatesPage() {
                 </div>
                 <Badge variant="secondary">{channel?.label}</Badge>
               </div>
-              <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/content/new?template=${template.id}`)}>
+              <Button variant="outline" size="sm" onClick={() => router.push(`/content/new?template=${template.id}`)}>
                 <Copy className="mr-1 h-4 w-4" /> Use Template
               </Button>
             </Card>

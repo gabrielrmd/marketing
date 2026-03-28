@@ -13,12 +13,12 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
-  { href: "/dashboard/content", label: "Content", icon: CalendarDays },
-  { href: "/dashboard/funnel", label: "Funnel", icon: Target },
-  { href: "/dashboard/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/dashboard/crm", label: "CRM", icon: Users },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/", label: "Dashboard", icon: BarChart3 },
+  { href: "/content", label: "Content", icon: CalendarDays },
+  { href: "/funnel", label: "Funnel", icon: Target },
+  { href: "/campaigns", label: "Campaigns", icon: Megaphone },
+  { href: "/crm", label: "CRM", icon: Users },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function Sidebar() {
@@ -38,8 +38,8 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 p-2">
         {navItems.map((item) => {
           const isActive =
-            item.href === "/dashboard"
-              ? pathname === "/dashboard"
+            item.href === "/"
+              ? pathname === "/"
               : pathname.startsWith(item.href);
 
           return (

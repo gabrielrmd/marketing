@@ -13,7 +13,7 @@ export function CalendarItem({ item }: { item: ContentItem }) {
   const channel = AU_CHANNELS.find((c) => c.id === item.channel);
 
   return (
-    <Link href={`/dashboard/content/${item.id}`}>
+    <Link href={`/content/${item.id}`}>
       <div ref={setNodeRef} style={style} {...attributes} {...listeners}
         className="rounded-md border bg-card p-2 text-xs shadow-sm hover:shadow-md transition-shadow cursor-pointer">
         <div className="flex items-center justify-between gap-1 mb-1">
