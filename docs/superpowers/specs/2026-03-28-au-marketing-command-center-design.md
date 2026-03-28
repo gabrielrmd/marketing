@@ -57,15 +57,15 @@ An all-in-one marketing command center for Advertising Unplugged (AU). The platf
 ### Features
 
 - **Content Calendar** — Monthly/weekly/daily views. Drag-and-drop scheduling. Filter by channel (LinkedIn, YouTube, Instagram, Blog, Podcast, Email). Color-coded by content type (educational, promotional, community, storytelling).
-- **Content Editor** — Rich text editor with markdown support. Template system pre-loaded with AU brand voice guidelines. Version history.
+- **Content Editor** — Rich text editor with markdown support. Template system pre-loaded with AU brand voice guidelines. Version history stored in a `content_versions` table (snapshot of content body + metadata on each save, capped at 50 versions per item, oldest auto-pruned).
 - **Multi-Channel Management:**
-  - LinkedIn — Direct publish via API (text posts, articles, images)
+  - LinkedIn — Direct publish text posts via Community Management API (personal profile). Image posts and article publishing require partner-level access (apply via LinkedIn Developer Portal). If partner access is denied, fall back to prep & export like YouTube/Instagram.
   - Email — Direct send via Resend (newsletters, sequences)
   - YouTube — Prep & export (title, description, tags, thumbnail)
   - Instagram — Prep & export (caption, hashtags, image preview at correct dimensions)
   - Blog — Direct publish (built into the platform)
   - Podcast — Episode planning & show notes
-- **Asset Library** — Upload and organize images, videos, graphics. Tag and search. Auto-resize for different platforms.
+- **Asset Library** — Upload and organize images, videos, graphics. Tag and search. Platform-specific dimension presets stored per channel (e.g., LinkedIn 1200x627, Instagram 1080x1080). Resizing handled via Supabase Storage image transforms (built-in, no extra infra). For MVP, manual crop/resize with recommended dimensions shown; auto-resize as a post-MVP enhancement.
 - **Content Pillars** — Map content to AU's six pillars (Library, Challenge, Circle, Stage, Summit, Stories) for balanced coverage tracking.
 
 ### Data Model
@@ -76,6 +76,7 @@ An all-in-one marketing command center for Advertising Unplugged (AU). The platf
 | `content_templates` | Reusable templates with AU brand voice |
 | `assets` | Files in Supabase Storage, tagged and searchable |
 | `publishing_logs` | What was published where, with API responses |
+| `content_versions` | Version history snapshots per content_item (body, metadata, created_at). Capped at 50 per item. |
 | `content_calendar_views` | Saved calendar filters/views per user |
 
 ## Module 2: Lead Generation & Funnel
@@ -84,10 +85,11 @@ An all-in-one marketing command center for Advertising Unplugged (AU). The platf
 
 ### Features
 
-- **Landing Page Builder** — Drag-and-drop builder for lead magnets, challenge signups, Circle enrollment, AI Strategy Builder promos. Pre-built AU-branded templates. Custom URLs. A/B testing (two variants, automatic winner selection).
+- **Landing Page Builder** — Drag-and-drop builder for lead magnets, challenge signups, Circle enrollment, AI Strategy Builder promos. Pre-built AU-branded templates. Custom URLs. A/B testing: two variants with 50/50 traffic split. Winner determined by conversion rate (form submissions / unique visitors). Auto-select winner after 100+ visitors per variant and 95% statistical significance, or manual override at any time.
 - **Lead Magnets** — Create gated content (PDF guides, Unplugged Library templates, mini-courses). Auto-deliver via Resend on signup. Track downloads and conversion rates.
 - **Email Sequences** — Visual sequence builder (trigger → delay → send → condition → branch). Pre-built sequences: welcome series, Challenge nurture, Circle upsell, AI Strategy Builder drip. Per-step analytics (open rate, click rate, unsubscribe, drop-off).
-- **Form Builder** — Embeddable signup forms. Popup/slide-in/inline variants. Auto-tag contacts by source and lead magnet.
+  - **Execution model:** When a contact enters a sequence (via form submission trigger or manual enrollment), a row is created in `sequence_enrollments` with `current_step_index` and `next_send_at`. A pg_cron job runs every 5 minutes, queries enrollments where `next_send_at <= now()`, sends the email via Resend, evaluates branch conditions (based on contact tags, score, or prior email interactions), advances `current_step_index`, and calculates the next `next_send_at` based on the step's delay. If a contact meets an exit condition (unsubscribe, purchase, manual removal), the enrollment is marked `completed` or `exited`.
+- **Form Builder** — Embeddable signup forms. Popup/slide-in/inline variants. Auto-tag contacts by source and lead magnet. Rate-limited to 10 submissions per IP per hour (Vercel WAF or Edge Middleware). Cloudflare Turnstile CAPTCHA on public forms to prevent bot spam.
 - **Conversion Tracking** — UTM parameter capture. Source attribution. Funnel visualization with stage-to-stage conversion rates.
 
 ### Data Model
@@ -99,7 +101,8 @@ An all-in-one marketing command center for Advertising Unplugged (AU). The platf
 | `email_sequences` | Sequence definition with steps, delays, conditions |
 | `email_sequence_steps` | Individual emails with template and timing |
 | `email_sends` | Log of every email sent, with open/click tracking |
-| `form_submissions` | Form captures with UTM data and source |
+| `form_submissions` | Form captures with UTM data, source, and `contact_id` (FK to contacts). On submission, a database trigger creates or links to an existing contact by email match. |
+| `sequence_enrollments` | Tracks a contact's progress through a sequence: contact_id, sequence_id, current_step_index, next_send_at, status (active/completed/exited) |
 | `funnel_events` | Timestamped events tracking contacts through stages |
 
 ## Module 3: Campaign Planning & Analytics
@@ -114,7 +117,7 @@ An all-in-one marketing command center for Advertising Unplugged (AU). The platf
   - Marketing Performance: channel metrics (social engagement, email rates, website traffic, content performance by pillar)
   - Funnel Health: stage-by-stage conversion rates, drop-off heatmap, time-in-stage, cohort analysis
   - Revenue Attribution: campaign/channel/content → Challenge signups, Circle memberships, AI Strategy Builder purchases. Cost per acquisition. LTV by source.
-- **Reporting** — Auto-generated weekly/monthly reports. PDF export (AU-branded). Scheduled email delivery.
+- **Reporting** — Auto-generated weekly/monthly reports. PDF export via `@react-pdf/renderer` (AU-branded with Oswald/Inter fonts, brand colors, and logo). Scheduled email delivery via Resend.
 
 ### Data Model
 
@@ -124,7 +127,7 @@ An all-in-one marketing command center for Advertising Unplugged (AU). The platf
 | `campaign_channels` | Per-channel budget and KPI targets |
 | `campaign_content` | Links campaigns to content_items and email_sequences |
 | `budget_entries` | Planned vs. actual spend line items |
-| `analytics_events` | Unified event stream (page views, signups, purchases, email opens) |
+| `analytics_events` | Unified event stream (page views, signups, purchases, email opens). Partitioned by month via Postgres range partitioning. Retention: 24 months hot, older data archived to Supabase Storage as compressed CSV. Acceptable at MVP scale; partitioning added when table exceeds 1M rows. |
 | `dashboard_widgets` | User-configured dashboard layouts and saved views |
 | `reports` | Generated report snapshots with PDF export references |
 
@@ -159,7 +162,7 @@ An all-in-one marketing command center for Advertising Unplugged (AU). The platf
 | `contact_notes` | Team notes |
 | `contact_tasks` | Follow-up tasks assigned to team members |
 | `segments` | Dynamic segment definitions (filter rules as JSON) |
-| `segment_contacts` | Materialized membership, refreshed on schedule |
+| `segment_contacts` | Materialized membership. Refreshed daily via pg_cron AND on relevant events (form submission, stage change, purchase) via database triggers. This ensures contacts appear in segments like "Challenge-ready" immediately, not just on the next daily refresh. |
 | `lead_score_rules` | Configurable scoring rules (action → points) |
 
 ## Auth, Roles & Multi-Tenancy
@@ -172,6 +175,8 @@ Three roles via Supabase Auth + RLS:
 | **Team** | Content, CRM, Campaigns — scoped to assigned contacts/campaigns. No billing, roles, or integration settings. | VA, content creator, social media manager |
 | **Community** | Read-only dashboards, personal analytics only. No access to AU internal CRM or campaigns. | Circle Pro members, Challenge participants |
 
+**Profiles table:** A `profiles` table extends `auth.users` with business-level fields: `id` (FK to auth.users), `display_name`, `role` (owner/team/community), `avatar_url`, `notification_preferences` (JSON). Auto-created via database trigger on user signup.
+
 - Invite via magic link, role assigned on accept.
 - Community access tied to Circle/Challenge membership status.
 - RLS on every table. Team sees only assigned data. Community sees only own data.
@@ -183,7 +188,7 @@ Three roles via Supabase Auth + RLS:
 
 | Service | Method | Capability |
 |---------|--------|------------|
-| LinkedIn | OAuth 2.0 + REST API | Publish posts/articles/images. Read engagement metrics. |
+| LinkedIn | OAuth 2.0 + Community Management API | Publish text posts from personal profile. Image/article publishing and engagement metrics require partner-level access (apply separately). Falls back to prep & export if not approved. |
 | Resend | API key | Send transactional + marketing emails. Webhooks for open/click/bounce. |
 | Plausible | API key | Pull traffic, page views, referral sources into dashboards. |
 
@@ -196,8 +201,8 @@ Three roles via Supabase Auth + RLS:
 
 ### Webhooks (Inbound)
 
-- Resend → email events → update `email_sends` and `contact_activities`
-- Stripe (future) → payment events → auto-update contact stage, log revenue
+- Resend → email events → update `email_sends` and `contact_activities`. **Webhook signatures verified** via Resend's `svix` library before processing any event.
+- Stripe (future) → payment events → auto-update contact stage, log revenue. **Webhook signatures verified** via Stripe's `constructEvent` method.
 
 ### Data Sync
 
