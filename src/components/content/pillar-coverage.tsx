@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 export function PillarCoverage() {
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     startTransition(async () => {

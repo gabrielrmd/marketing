@@ -14,7 +14,7 @@ type VersionHistoryProps = {
 export function VersionHistory({ contentItemId, onRestore }: VersionHistoryProps) {
   const [versions, setVersions] = useState<ContentVersion[]>([]);
   const [open, setOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     if (!open) return;

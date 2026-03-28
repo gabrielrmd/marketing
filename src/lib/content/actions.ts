@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/server";
 import { validateContentItem, prepareContentForSave, generateSlug } from "./validation";
 import type { ChannelId, ContentTypeId } from "./types";
 
-export { validateContentItem, prepareContentForSave } from "./validation";
 
 export async function createContentItem(data: {
   title: string;

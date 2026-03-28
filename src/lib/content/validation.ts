@@ -5,7 +5,7 @@ type ContentInput = {
   title: string;
   channel: string;
   content_type: string;
-  scheduled_at?: string;
+  scheduled_at?: string | null;
 };
 
 export function validateContentItem(input: ContentInput): string[] {

@@ -17,6 +17,14 @@ type ContentEditorProps = {
   maxCharacters?: number;
 };
 
+function ToolbarButton({ active, onClick, children }: { active?: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <Button variant="ghost" size="sm" onClick={onClick} className={cn("h-8 w-8 p-0", active && "bg-muted")}>
+      {children}
+    </Button>
+  );
+}
+
 export function ContentEditor({ content, onChange, placeholder = "Start writing...", maxCharacters }: ContentEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -35,12 +43,6 @@ export function ContentEditor({ content, onChange, placeholder = "Start writing.
   if (!editor) return null;
 
   const charCount = editor.storage.characterCount?.characters() ?? 0;
-
-  const ToolbarButton = ({ active, onClick, children }: { active?: boolean; onClick: () => void; children: React.ReactNode }) => (
-    <Button variant="ghost" size="sm" onClick={onClick} className={cn("h-8 w-8 p-0", active && "bg-muted")}>
-      {children}
-    </Button>
-  );
 
   return (
     <div className="rounded-lg border">

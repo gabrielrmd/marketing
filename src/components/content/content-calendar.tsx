@@ -353,12 +353,13 @@ export function ContentCalendar({
               ))}
             </div>
 
-            <Button size="sm" asChild>
-              <Link href="/dashboard/content/new">
-                <Plus />
-                New
-              </Link>
-            </Button>
+            <Link
+              href="/dashboard/content/new"
+              className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90"
+            >
+              <Plus className="h-4 w-4" />
+              New
+            </Link>
           </div>
         </div>
 

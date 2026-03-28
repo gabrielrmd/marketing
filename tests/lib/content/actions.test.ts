@@ -8,7 +8,7 @@ describe("validateContentItem", () => {
   });
 
   it("returns errors for missing channel", () => {
-    const errors = validateContentItem({ title: "Test", channel: "" as any, content_type: "educational" });
+    const errors = validateContentItem({ title: "Test", channel: "" as import("@/lib/content/types").ChannelId, content_type: "educational" });
     expect(errors).toContain("Channel is required");
   });
 

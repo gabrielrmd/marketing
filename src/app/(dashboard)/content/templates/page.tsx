@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import type { ContentTemplate } from "@/lib/content/types";
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<ContentTemplate[]>([]);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function TemplatesPage() {
       if (data) setTemplates(data as ContentTemplate[]);
     }
     load();
-  }, []);
+  }, [supabase]);
 
   return (
     <div className="space-y-6">

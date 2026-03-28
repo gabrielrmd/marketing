@@ -12,7 +12,7 @@ export function CalendarClient({ initialItems }: { initialItems: ContentItem[] }
   const [view, setView] = useState<CalendarView>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [channelFilter, setChannelFilter] = useState<ChannelId | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   function refresh(date: Date, v: CalendarView, channel: ChannelId | null) {
     startTransition(async () => {

@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import NextImage from "next/image";
 import { Search, Trash2 } from "lucide-react";
 import type { Asset } from "@/lib/content/types";
 
 export function AssetGrid({ refreshKey }: { refreshKey: number }) {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [search, setSearch] = useState("");
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     async function load() {
@@ -18,7 +19,7 @@ export function AssetGrid({ refreshKey }: { refreshKey: number }) {
       if (data) setAssets(data as Asset[]);
     }
     load();
-  }, [refreshKey]);
+  }, [refreshKey, supabase]);
 
   async function handleDelete(asset: Asset) {
     if (!confirm(`Delete ${asset.filename}?`)) return;
@@ -44,7 +45,7 @@ export function AssetGrid({ refreshKey }: { refreshKey: number }) {
           return (
             <div key={asset.id} className="group relative rounded-lg border overflow-hidden">
               {asset.mime_type.startsWith("image/") ? (
-                <img src={url} alt={asset.filename} className="aspect-square object-cover w-full" />
+                <NextImage src={url} alt={asset.filename} width={200} height={200} className="aspect-square object-cover w-full" />
               ) : (
                 <div className="flex aspect-square items-center justify-center bg-muted text-xs text-muted-foreground">{asset.mime_type.split("/")[1]}</div>
               )}
